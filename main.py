@@ -83,13 +83,14 @@ def connect(mqtt_client):
     mqtt_client.on_message = on_message
     mqtt_client.tls_set(certifi.where(), cert_reqs=ssl.CERT_NONE)
 
-    while connected is None:
+    while True:
         try:
+            print()
             mqtt_client.connect(config.printer_ip, port=config.printer_port)
+            break
         except OSError as e:
             print(f'[W] No network yet: {e}')
             time.sleep(5)
-
 
     mqtt_client.loop_start()
 
