@@ -47,20 +47,23 @@ def handle_message(payload):
     json_payload = json.loads(payload)
     #print(json_payload)
     if 'print' in json_payload.keys():
-        gcode_state = json_payload["print"]["gcode_state"]
-        if gcode_state != last_gcode_status:
-            print(f'[I] STATUS: {last_gcode_status} -> {gcode_state}')
-            last_gcode_status = gcode_state
-            if gcode_state == GCodeStates.IDLE.value:
-                if time.time() >= turn_off_time:
-                    print(f'[I] Fan off')
-                    GPIO.output(FAN_PIN, False)
+        try:
+            gcode_state = json_payload["print"]["gcode_state"]
+            if gcode_state != last_gcode_status:
+                print(f'[I] STATUS: {last_gcode_status} -> {gcode_state}')
+                last_gcode_status = gcode_state
+                if gcode_state == GCodeStates.IDLE.value:
+                    if time.time() >= turn_off_time:
+                        print(f'[I] Fan off')
+                        GPIO.output(FAN_PIN, False)
+                    else:
+                        print(f'[I] fan pending off in {turn_off_time - time.time()} s')
                 else:
-                    print(f'[I] fan pending off in {turn_off_time - time.time()} s')
-            else:
-                print(f'[I] Fan on')
-                turn_off_time = time.time() + 120
-                GPIO.output(FAN_PIN, True)
+                    print(f'[I] Fan on')
+                    turn_off_time = time.time() + 120
+                    GPIO.output(FAN_PIN, True)
+        except KeyError as e:
+            print(f'[W] got KeyError {e}. payload: {json_payload}')
 
 
 def on_message(client, userdata, message):
