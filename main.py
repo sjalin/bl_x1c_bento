@@ -23,6 +23,7 @@ FAN_PIN = 17
 
 connected = None
 turn_off_time = time.time()
+last_gcode_status = 'NONE'
 
 
 class GCodeStates(Enum):
@@ -41,22 +42,25 @@ def on_connect(client, userdata, flags, rc):
 
 def handle_message(payload):
     global turn_off_time
+    global last_gcode_status
 
     json_payload = json.loads(payload)
     #print(json_payload)
     if 'print' in json_payload.keys():
         gcode_state = json_payload["print"]["gcode_state"]
-        print(f'[I] STATUS: {gcode_state} {GCodeStates.IDLE.value}')
-        if gcode_state == GCodeStates.IDLE.value:
-            if time.time() >= turn_off_time:
-                print(f'[I] Fan off')
-                GPIO.output(FAN_PIN, False)
+        if gcode_state != last_gcode_status:
+            print(f'[I] STATUS: {last_gcode_status} -> {gcode_state}')
+            last_gcode_status = gcode_state
+            if gcode_state == GCodeStates.IDLE.value:
+                if time.time() >= turn_off_time:
+                    print(f'[I] Fan off')
+                    GPIO.output(FAN_PIN, False)
+                else:
+                    print(f'[I] fan pending off in {turn_off_time - time.time()} s')
             else:
-                print(f'[I] fan pending off in {turn_off_time - time.time()} s')
-        else:
-            print(f'[I] Fan on')
-            turn_off_time = time.time() + 120
-            GPIO.output(FAN_PIN, True)
+                print(f'[I] Fan on')
+                turn_off_time = time.time() + 120
+                GPIO.output(FAN_PIN, True)
 
 
 def on_message(client, userdata, message):
@@ -104,7 +108,7 @@ def main():
     mqtt_client.subscribe(f'#')
 
     while True:
-        time.sleep(10)
+        time.sleep(300)
         print('.')
 
 
