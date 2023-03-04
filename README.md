@@ -9,4 +9,5 @@ How to use:
    2. Connect fan power to the other side of the relay
 2. pip install requirements.txt
 2. copy config_example.py to config.py and change things that needs changes
-3. run main.py
+3. Connect relay to GPIO17, IO header pin 11 
+4. run main.py
