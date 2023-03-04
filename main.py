@@ -1,3 +1,4 @@
+import datetime
 import json
 from enum import Enum
 
@@ -15,7 +16,7 @@ except ModuleNotFoundError:
 try:
     import config
 except Exception as e:
-    print(f"NO VALID CONFIG FILE (./config.py) {e}")
+    print(f'[E] NO VALID CONFIG FILE (./config.py) {e}')
     exit()
 
 FAN_PIN = 17
@@ -33,14 +34,13 @@ class GCodeStates(Enum):
     FINISH = 'FINISH'
 
 
-
 def on_connect(client, userdata, flags, rc):
     global connected
     if rc == 0:
         print(f'[I] Connected to printer {client} {userdata} {flags}')
         connected = True
     else:
-        print('[E] Connection failed')
+        print('[W] Connection failed')
         connected = False
 
 
@@ -49,10 +49,10 @@ def handle_message(payload):
     global last_gcode_status
 
     json_payload = json.loads(payload)
-    #print(json_payload)
+    # print(f'[D] {json_payload}')
     if 'print' in json_payload.keys():
         try:
-            gcode_state = json_payload["print"]["gcode_state"]
+            gcode_state = json_payload['print']['gcode_state']
             if gcode_state != last_gcode_status:
                 print(f'[I] STATUS: {last_gcode_status} -> {gcode_state}')
                 last_gcode_status = gcode_state
@@ -72,7 +72,7 @@ def handle_message(payload):
 
 def on_message(client, userdata, message):
     if message.topic != f'device/{config.printer_sn}/report':
-        print(f'[E] Unknown topic {message.topic}, msg = {str(message.payload.decode("utf-8"))}')
+        print(f'[W] Unknown topic {message.topic}, msg = {str(message.payload.decode("utf-8"))}')
     else:
         handle_message(message.payload)
 
@@ -85,7 +85,6 @@ def connect(mqtt_client):
 
     while True:
         try:
-            print()
             mqtt_client.connect(config.printer_ip, port=config.printer_port)
             break
         except OSError as e:
@@ -95,12 +94,11 @@ def connect(mqtt_client):
     mqtt_client.loop_start()
 
     while connected is None:
-        print(connected)
         print('[I] Connecting...')
         time.sleep(5)
 
     if not connected:
-        print("[E] Could not connect to printer")
+        print('[W] Could not connect to printer')
         return False
 
     print('[I] Connection complete')
@@ -114,23 +112,14 @@ def gpio_setup():
 
 def main():
     gpio_setup()
-
     mqtt_client = mqtt.Client()
-
-    countdown = 60
-    while countdown:
-        print(f'Delay startup to wait for network, {countdown} s left')
-        time.sleep(1)
-        countdown -= 1
-
     connect(mqtt_client)
-
     mqtt_client.loop_start()
     mqtt_client.subscribe(f'#')
 
     while True:
         time.sleep(300)
-        print('.')
+        print(f'[I] {datetime.datetime} still alive')
 
 
 if __name__ == '__main__':
