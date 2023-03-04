@@ -88,7 +88,7 @@ def connect(mqtt_client):
             mqtt_client.connect(config.printer_ip, port=config.printer_port)
         except OSError as e:
             print(f'[W] No network yet: {e}')
-            time.sleep(10)
+            time.sleep(5)
 
 
     mqtt_client.loop_start()
@@ -115,6 +115,12 @@ def main():
     gpio_setup()
 
     mqtt_client = mqtt.Client()
+
+    countdown = 60
+    while countdown:
+        print(f'Delay startup to wait for network, {countdown} s left')
+        time.sleep(1)
+        countdown -= 1
 
     connect(mqtt_client)
 
