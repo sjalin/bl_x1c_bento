@@ -28,6 +28,10 @@ last_gcode_status = 'NONE'
 
 class GCodeStates(Enum):
     IDLE = 'IDLE'
+    RUNNING = 'RUNNING'
+    FAILED = 'FAILED'
+    FINISH = 'FINISH'
+
 
 
 def on_connect(client, userdata, flags, rc):
@@ -52,7 +56,7 @@ def handle_message(payload):
             if gcode_state != last_gcode_status:
                 print(f'[I] STATUS: {last_gcode_status} -> {gcode_state}')
                 last_gcode_status = gcode_state
-                if gcode_state == GCodeStates.IDLE.value:
+                if gcode_state != GCodeStates.RUNNING.value:
                     if time.time() >= turn_off_time:
                         print(f'[I] Fan off')
                         GPIO.output(FAN_PIN, False)
