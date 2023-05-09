@@ -7,6 +7,10 @@ Example build of hardware on INSERT PAGE HERE
 ### Build hardware
    1. Connect a relay to PIN 11 pn a raspberry pi
    2. Connect fan power to the other side of the relay
+
+Notes: 
+* Using a Gaptec LMO78_05-1.0 DC/DC for converting the 24V to 5V for driving the Raspberry pi
+
 ### Install software
 run to following
 ```bash
