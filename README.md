@@ -6,7 +6,10 @@ Example build of hardware on INSERT PAGE HERE
 ## How to use:
 ### Build hardware
    1. Connect a relay to PIN 17 pn a raspberry pi
-   2. Connect fan power to the other side of the relay
+   2. Connect fan power to the other side of a transisor
+
+#### Detailed build instructions
+https://www.printables.com/model/516646-bambu-lab-x1c-bento-box-fan-controller?fbclid=IwAR3u0gIyjtkez5R3z-f9CspmMOMTlxndO_3BLBmhLX5g-z_dN5bXPZnnJDU
 
 Notes: 
 * Using a Gaptec LMO78_05-1.0 DC/DC for converting the 24V to 5V for driving the Raspberry pi
