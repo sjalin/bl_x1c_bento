@@ -22,7 +22,12 @@ touch tmux_start.sh
 echo "#!/bin/bash" >> tmux_start.sh
 echo "tmux new-session -d -s bento" >> tmux_start.sh
 echo "tmux send-keys -t bento 'python projects/bl_x1c_bento/main.py' Enter" >> tmux_start.sh
+cd bl_x1c_bento
+cp config_example.py config.py
 ```
+Edit config.py to fit your needs
+printer_password can be found in printer menu (will get proper path to this)
+
 
 Add the following
 ```bash
