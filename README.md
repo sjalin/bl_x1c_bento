@@ -5,7 +5,7 @@ Example build of hardware on INSERT PAGE HERE
 
 ## How to use:
 ### Build hardware
-   1. Connect a relay to PIN 11 pn a raspberry pi
+   1. Connect a relay to PIN 17 pn a raspberry pi
    2. Connect fan power to the other side of the relay
 
 Notes: 
