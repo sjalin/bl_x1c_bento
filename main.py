@@ -20,6 +20,7 @@ except Exception as e:
     exit()
 
 FAN_PIN = 17
+LED_PIN = 13
 
 
 connected = None
@@ -60,12 +61,14 @@ def handle_message(payload):
                     if time.time() >= turn_off_time:
                         print(f'[I] Fan off')
                         GPIO.output(FAN_PIN, False)
+                        GPIO.output(LED_PIN, False)
                     else:
                         print(f'[I] fan pending off in {turn_off_time - time.time()} s')
                 else:
                     print(f'[I] Fan on')
                     turn_off_time = time.time() + 120
                     GPIO.output(FAN_PIN, True)
+                    GPIO.output(LED_PIN, True)
         except KeyError as e:
             print(f'[W] got KeyError {e}. payload: {json_payload}')
 
@@ -108,6 +111,8 @@ def gpio_setup():
     GPIO.setmode(GPIO.BCM)
     GPIO.setup(FAN_PIN, GPIO.OUT)
     GPIO.output(FAN_PIN, False)
+    GPIO.setup(LED_PIN, GPIO.OUT)
+    GPIO.output(LED_PIN, False)
 
 
 def main():
